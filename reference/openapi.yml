@@ -1,0 +1,322 @@
+openapi: 3.0.0
+info:
+  title: go-web
+  version: '1.0'
+servers:
+  - url: 'http://localhost:3000'
+paths:
+  '/users/{userId}':
+    parameters:
+      - schema:
+          type: integer
+        name: userId
+        in: path
+        required: true
+        description: Id of an existing user.
+    get:
+      summary: Get User Info by User ID
+      tags: []
+      responses:
+        '200':
+          description: User found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+              examples:
+                example-1:
+                  id: 142
+                  name: foo
+                  email: bar@baz.com
+                  password: hashedpassword
+                  createdAt: '2021-09-29T18:42:00+09:00'
+                  updatedAt: '2021-09-29T18:42:00+09:00'
+      operationId: get-users-userId
+      description: Retrieve the information of the user with the matching user ID.
+    patch:
+      summary: Update User Information
+      operationId: patch-users-userId
+      responses:
+        '200':
+          description: User Updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+              examples:
+                Updated User:
+                  id: 142
+                  name: foo
+                  email: bar@baz.com
+                  password: hashedpassword
+                  createdAt: '2021-09-29T18:42:00+09:00'
+                  updatedAt: '2021-09-30T18:42:00+09:00'
+        '404':
+          description: User Not Found
+        '409':
+          description: Email Already Taken
+      description: Update the information of an existing user.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                id:
+                  type: integer
+                name:
+                  type: string
+                email:
+                  type: string
+                password:
+                  type: string
+              required:
+                - id
+            examples:
+              Update Name:
+                name: foo
+              Update Email:
+                email: bar@baz.com
+              Update Email & Password:
+                email: foo@bar.com
+                password: new
+        description: Patch user properties to update.
+  /user:
+    post:
+      summary: Create New User
+      operationId: post-user
+      responses:
+        '200':
+          description: User Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+              examples:
+                New User:
+                  id: 142
+                  name: foo
+                  email: bar@baz.com
+                  password: hashedpassword
+                  createdAt: '2021-09-29T18:42:00+09:00'
+                  updatedAt: '2021-09-29T18:42:00+09:00'
+        '400':
+          description: Missing Required Information
+        '409':
+          description: Email Already Taken
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                email:
+                  type: string
+                password:
+                  type: string
+                note:
+                  type: string
+                  nullable: true
+              required:
+                - name
+                - email
+                - password
+            examples:
+              Create User:
+                name: user
+                email: user@email.com
+                password: password
+        description: Post the necessary fields for the API to create a new user.
+      description: Create a new user.
+  '/users/{userId}/todo':
+    parameters:
+      - schema:
+          type: string
+        name: userId
+        in: path
+        required: true
+    post:
+      summary: ''
+      operationId: post-users-userId-todo
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Todo'
+              examples:
+                example-1:
+                  id: 0
+                  userId: string
+                  content: string
+                  createdAt: '2021-09-29T18:42:00+09:00'
+                  updatedAt: '2021-09-29T18:42:00+09:00'
+                  done: false
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                userId:
+                  type: integer
+                content:
+                  type: string
+                note:
+                  type: string
+                  nullable: true
+              required:
+                - userId
+                - content
+            examples:
+              example-1:
+                id: 1
+                userId: 123
+                content: content
+  '/users/{userId}/todos':
+    parameters:
+      - schema:
+          type: string
+        name: userId
+        in: path
+        required: true
+    get:
+      summary: Your GET endpoint
+      tags: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Todo'
+              examples: {}
+      operationId: get-users-userId-todos
+  '/users/{userId}/todo/{todoId}':
+    parameters:
+      - schema:
+          type: string
+        name: userId
+        in: path
+        required: true
+      - schema:
+          type: string
+        name: todoId
+        in: path
+        required: true
+    patch:
+      summary: ''
+      operationId: patch-users-userId-todo-todoId
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Todo'
+              examples:
+                example-1:
+                  id: 1
+                  userId: 123
+                  content: string
+                  createdAt: string
+                  updatedAt: string
+                  done: true
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                id:
+                  type: integer
+                content:
+                  type: string
+                note:
+                  type: string
+                done:
+                  type: boolean
+              required:
+                - id
+            examples:
+              example-1:
+                userId: 123
+                content: string
+                done: true
+components:
+  schemas:
+    User:
+      title: User
+      description: ''
+      examples:
+        - id: 142
+          firstName: Alice
+          lastName: Smith
+          email: alice.smith@gmail.com
+          dateOfBirth: '1997-10-31'
+          emailVerified: true
+          signUpDate: '2019-08-24'
+      type: object
+      x-examples:
+        example-1:
+          id: 142
+          firstName: Alice
+          lastName: Smith
+          email: alice.smith@gmail.com
+          dateOfBirth: '1997-10-31'
+          emailVerified: true
+          signUpDate: '2019-08-24'
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        email:
+          type: string
+        password:
+          type: string
+        createdAt:
+          type: string
+        updatedAt:
+          type: string
+        note:
+          type: string
+          nullable: true
+      required:
+        - id
+        - name
+        - email
+        - password
+        - createdAt
+        - updatedAt
+    Todo:
+      title: Todo
+      type: object
+      properties:
+        id:
+          type: integer
+        userId:
+          type: integer
+        content:
+          type: string
+        createdAt:
+          type: string
+        updatedAt:
+          type: string
+        done:
+          type: boolean
+        note:
+          type: string
+          nullable: true
+      required:
+        - id
+        - userId
+        - content
+        - createdAt
+        - updatedAt
+        - done
